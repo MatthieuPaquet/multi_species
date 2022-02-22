@@ -128,8 +128,8 @@ DDcode <- nimbleCode({
   }#a
   if(DD_EXPLICIT){
     dd.phi.v~dnorm(0,1)
-    dd.phi.p~dnorm(0,1)
   }
+  dd.phi.p~dnorm(0,1)
 })
 
 DD_EXPLICIT<-TRUE
