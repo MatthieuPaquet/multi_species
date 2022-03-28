@@ -479,7 +479,6 @@ for (i in 2:100){
   fledg.obs.v<-list.simul[[i]]$fledg.obs.v[nyears.start:(nyears.start+nyears-1)]
   
   DDdata<-list(marray.j.p=marray.j.p,N.obs.p=N.obs.p,fledg.obs.p=fledg.obs.p,marray.j.v=marray.j.v,N.obs.v=N.obs.v,fledg.obs.v=fledg.obs.v)
-  DDinits<-list(dd.phi.v=-0.025,dd.phi.p=-0.01,dd.fledg.rate.v=-0.005,dd.fledg.rate.p=0.004,mu.phi.p=c(0.5,qlogis(0.7)),mu.phi.v=c(0.5,qlogis(0.6)),p.p=0.7,p.v=0.7,mu.fledg.rate.p=0,mu.fledg.rate.v=2,N1rec.p=N1rec.p,N1ad.p=N1ad.p,N1rec.v=N1rec.v,N1ad.v=N1ad.v)
   #set data
   cDDmodelIPM$setData(DDdata)
   cDDmodelIPM$setInits(DDinits)
