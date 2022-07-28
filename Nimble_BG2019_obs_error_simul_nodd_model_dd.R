@@ -1,4 +1,4 @@
-#fit the models with inter-species density dependence to data wihout inter species density dependence
+#fit the models with inter-species density dependence to data without inter species density dependence
 
 setwd("D:/multi_species/")
 ####Nimble model adapted from Barraquand & Gimenez 2019
