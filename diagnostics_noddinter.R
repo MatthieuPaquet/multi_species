@@ -5,7 +5,7 @@ library(viridis)
 #code for gelman diagnostic
 setwd("D:/multi_species/")
 load(file="samples_BG2019_dd_obserror_time10_sim_nodd_ddinter_stoch.Rdata")
-load(file="simul_BG2019_dd_obserror_time10_ddinter_stoch.Rdata")
+load(file="simul_BG2019_dd_obserror_time10_noddinter_stoch.Rdata")
 n.simul<-length(list.samples)
 n.param<-dim(list.samples[[1]]$chain1)[2]
 #change line below depending on the scenario
@@ -22,17 +22,14 @@ for(s in 1:n.simul){
     effective.size[s,i]<-effectiveSize(list(as.mcmc(list.samples[[s]]$chain2[,i]),as.mcmc(list.samples[[s]]$chain1[,i])))
   }#i
 }#s
-
 colnames(gelman.table)<-colnames( effective.size)<-names(list.samples[[1]]$chain1[1,])
+#select subset for which "alpha" parameters (i.e., intercepts and slopes on log and logit scale) converged and mix OK (based on gelman diagnostic and effective sample size)
+gelman.table.alphas<-gelman.table[,c("dd.fledg.rate.p" ,   "dd.fledg.rate.v"  ,  "dd.phi.p","dd.phi.v" ,"mu.fledg.rate.p" ,   "mu.fledg.rate.v","mu.phi.p[1]" ,"mu.phi.p[2]"   ,     "mu.phi.v[1]"  ,      "mu.phi.v[2]"   )]
+effective.size<-effective.size[,c("dd.fledg.rate.p" ,   "dd.fledg.rate.v"  ,  "dd.phi.p","dd.phi.v" ,"mu.fledg.rate.p" ,   "mu.fledg.rate.v","mu.phi.p[1]" ,"mu.phi.p[2]"   ,     "mu.phi.v[1]"  ,      "mu.phi.v[2]"   )]
 
-gelman.table
-max(gelman.table)
-colnames(gelman.table)[which(gelman.table==max(gelman.table),arr.ind=TRUE)]
-rownames(which(gelman.table[,]<1.1))
-effective.size
-min(effective.size)
-colnames(effective.size)[which(effective.size==min(effective.size),arr.ind=TRUE)]
-
+max(gelman.table.alphas)
+incl <- which(gelman.table.alphas[,"dd.fledg.rate.p"]<1.1&gelman.table.alphas[,"dd.fledg.rate.v"]<1.1&gelman.table.alphas[,"dd.phi.p"]<1.1&gelman.table.alphas[,"dd.phi.v"]<1.1&gelman.table.alphas[,"mu.fledg.rate.p"]<1.1&gelman.table.alphas[,"mu.fledg.rate.v"]<1.1&gelman.table.alphas[,"mu.phi.p[1]"]<1.1&gelman.table.alphas[,"mu.phi.p[2]"]<1.1&gelman.table.alphas[,"mu.phi.v[1]"]<1.1&gelman.table.alphas[,"mu.phi.v[2]"]<1.1&effective.size[,"dd.fledg.rate.p"]>50&effective.size[,"dd.fledg.rate.v"]>50&effective.size[,"dd.phi.p"]>50&effective.size[,"dd.phi.v"]>50&effective.size[,"mu.fledg.rate.p"]>50&effective.size[,"mu.fledg.rate.v"]>50&effective.size[,"mu.phi.p[1]"]>50&effective.size[,"mu.phi.p[2]"]>50&effective.size[,"mu.phi.v[1]"]>50&effective.size[,"mu.phi.v[2]"]>50)
+length(incl)
 #code for ploting chains
 
 plot(list.samples[[1]]$chain1[,'dd.fledg.rate.v'],type="l",ylim=c(-0.01,0.01))
@@ -74,21 +71,20 @@ mu.phi.p=c(0.5,qlogis(0.7))
 mu.phi.v=c(0.5-0.025 * 21,qlogis(0.6))
 mu.fledg.rate.p=0 + 0.004 * 101
 mu.fledg.rate.v=2
-
-
 list.samples.new<-list()
 for(i in 1:length(list.samples)){
   list.samples.new[[i]]<-rbind(list.samples[[i]]$chain1,list.samples[[i]]$chain2)
 }#i
-n.simul<-length(list.samples.new)
-n.samples<-nrow(list.samples.new[[1]])
-n.param<-length( list.samples.new[[1]][1,])
+list.samples.converg<-list.samples.new[incl]
+n.simul<-length(list.samples.converg)
+n.samples<-nrow(list.samples.converg[[1]])
+n.param<-length( list.samples.converg[[1]][1,])
 n.n<-100
 
 dd.phi.v.est<-dd.phi.p.est<-dd.fledg.rate.v.est<-dd.fledg.rate.p.est<-mu.phi.rec.p.est<-mu.phi.rec.v.est<-mu.phi.ad.p.est<-mu.phi.ad.v.est<-mu.fledg.rate.p.est<-mu.fledg.rate.v.est<-matrix(NA,n.simul,n.samples)
 for(s in 1:n.simul){
   for(i in 1:n.samples){
-    mcmc<-list.samples.new[[s]][i,]
+    mcmc<-list.samples.converg[[s]][i,]
     dd.phi.v.est[s,i] = mcmc['dd.phi.v']
     dd.phi.p.est[s,i] = mcmc['dd.phi.p']
     dd.fledg.rate.v.est[s,i] = mcmc['dd.fledg.rate.v']
