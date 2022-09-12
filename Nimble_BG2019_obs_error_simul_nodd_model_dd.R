@@ -1,18 +1,18 @@
 #fit the models with inter-species density dependence to data without inter species density dependence
 
-setwd("D:/multi_species/")
+setwd("/media/matpaquet/Elements/multi_species")
 ####Nimble model adapted from Barraquand & Gimenez 2019
 
 ###Adjust these logical values for simulating and fit the desired scenario
 ##random temporal variation
-STOCH<-TRUE
-#STOCH<-FALSE
+#STOCH<-TRUE
+STOCH<-FALSE
 ##species interactions always present (kept here to not alter model code)
 DD_INTER<-TRUE
 ##time series of 10 years with 100 juveniles marked every year
-#TIME10<-TRUE
-##when FALSE the time series is of 30 years with 20 juveniles marked every year
-TIME10<-FALSE
+TIME10<-TRUE
+#when FALSE the time series is of 30 years with 20 juveniles marked every year
+#TIME10<-FALSE
 
 library(nimble)
 library(mcmcplots)
@@ -22,17 +22,17 @@ if(TIME10){
   nyears<-10
   nmarked<-100
   if(STOCH){
-    load("simul_BG2019_dd_obserror_time10_noddinter_stoch.Rdata")
+    load("simul_BG2019_dd_lognormobserror_time10_noddinter_stoch.Rdata")
   }else{
-    load("simul_BG2019_dd_obserror_time10_noddinter_nostoch.Rdata")
+    load("simul_BG2019_dd_lognormobserror_time10_noddinter_nostoch.Rdata")
   }#stoch
 }else{
   nyears<-30
   nmarked<-20
   if(STOCH){
-    load("simul_BG2019_dd_obserror_time30_noddinter_stoch.Rdata")
+    load("simul_BG2019_dd_lognormobserror_time30_noddinter_stoch.Rdata")
   }else{
-    load("simul_BG2019_dd_obserror_time30_noddinter_nostoch.Rdata")
+    load("simul_BG2019_dd_lognormobserror_time30_noddinter_nostoch.Rdata")
   }#stoch
 }#time
 #Number of nestlings marked every year
@@ -52,8 +52,8 @@ DDcode <- nimbleCode({
   # Likelihood for  count data (state-space model) 
   for (t in 1:nyears){
     #Observation process
-    N.obs.p[t]~dnorm(N.p[t],1/40)
-    N.obs.v[t]~dnorm(N.v[t],1/200)
+    N.obs.p[t]~dlnorm(log(N.p[t]),sd=0.1)
+    N.obs.v[t]~dlnorm(log(N.v[t]),sd=0.1)
     # System process
     N.p[t]<-N.rec.p[t]+N.ad.p[t]
     N.v[t]<-N.rec.v[t]+N.ad.v[t]
@@ -242,6 +242,7 @@ if(DD_INTER){
     DDmcmcConf <- configureMCMC(cDDmodelIPM,monitors=monitor.base)
   }}
 
+
 ###block samplers
 if(DD_INTER){
   if(STOCH){
@@ -326,6 +327,7 @@ if(DD_INTER){
                             
                           }}
 
+
 #Build the MCMC
 DDmcmc <- buildMCMC(DDmcmcConf)
 #Compile the  MCMC
@@ -334,16 +336,16 @@ cDDmcmc <- compileNimble(DDmcmc, project = cDDmodelIPM)
 list.samples[[1]]<-runMCMC(cDDmcmc,niter=40000,nburnin=20000,thin=20,nchains=2,setSeed=T)
 ##save posterior samples
 if(TIME10){
-    if(STOCH){
-      save(list.samples,file="samples_BG2019_dd_obserror_time10_sim_nodd_ddinter_stoch.Rdata")
-    }else{
-      save(list.samples,file="samples_BG2019_dd_obserror_time10_sim_nodd_ddinter_nostoch.Rdata")
-   }#stoch
+  if(STOCH){
+    save(list.samples,file="samples_BG2019_dd_lognormobserror_time10_sim_nodd_ddinter_stoch.Rdata")
+  }else{
+    save(list.samples,file="samples_BG2019_dd_lognormobserror_time10_sim_nodd_ddinter_nostoch.Rdata")
+  }#stoch
 }else{
-    if(STOCH){
-      save(list.samples,file="samples_BG2019_dd_obserror_time30_sim_nodd_dddinter_stoch.Rdata")
-    }else{
-      save(list.samples,file="samples_BG2019_dd_obserror_time30_sim_nodd_dddinter_nostoch.Rdata")
+  if(STOCH){
+    save(list.samples,file="samples_BG2019_dd_lognormobserror_time30_sim_nodd_ddinter_stoch.Rdata")
+  }else{
+    save(list.samples,file="samples_BG2019_dd_lognormobserror_time30_sim_nodd_ddinter_nostoch.Rdata")
   }#stoch
 }#time30
 
@@ -372,15 +374,15 @@ for (i in 2:100){
   ##save posterior samples
   if(TIME10){
     if(STOCH){
-      save(list.samples,file="samples_BG2019_dd_obserror_time10_sim_nodd_ddinter_stoch.Rdata")
+      save(list.samples,file="samples_BG2019_dd_lognormobserror_time10_sim_nodd_ddinter_stoch.Rdata")
     }else{
-      save(list.samples,file="samples_BG2019_dd_obserror_time10_sim_nodd_ddinter_nostoch.Rdata")
+      save(list.samples,file="samples_BG2019_dd_lognormobserror_time10_sim_nodd_ddinter_nostoch.Rdata")
     }#stoch
   }else{
     if(STOCH){
-      save(list.samples,file="samples_BG2019_dd_obserror_time30_sim_nodd_dddinter_stoch.Rdata")
+      save(list.samples,file="samples_BG2019_dd_lognormobserror_time30_sim_nodd_ddinter_stoch.Rdata")
     }else{
-      save(list.samples,file="samples_BG2019_dd_obserror_time30_sim_nodd_dddinter_nostoch.Rdata")
+      save(list.samples,file="samples_BG2019_dd_lognormobserror_time30_sim_nodd_ddinter_nostoch.Rdata")
     }#stoch
   }#time30
   
