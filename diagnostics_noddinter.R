@@ -1,15 +1,34 @@
-
-
 library(coda)
 library(viridis)
 #code for gelman diagnostic
-setwd("D:/multi_species/")
-load(file="samples_BG2019_dd_obserror_time10_sim_nodd_ddinter_stoch.Rdata")
-load(file="simul_BG2019_dd_obserror_time10_noddinter_stoch.Rdata")
+setwd("/home/matpaquet/Documents/mcmcsamples/multi_species/")
+#set to TRUE for scenario with 100 individuals marked every year for 10 years.
+#if FALSE it loads the scenario with 20 individuals marked per year for 30 years.
+TIME10 <- FALSE
+STOCH <- TRUE
+if (STOCH) {
+if (TIME10) {
+load(file="samples_BG2019_dd_lognormobserror_time10_sim_nodd_ddinter_stoch.Rdata")
+load(file="simul_BG2019_dd_lognormobserror_time10_noddinter_stoch.Rdata")
+n.years <- 10
+} else {
+  load(file="samples_BG2019_dd_lognormobserror_time30_sim_nodd_ddinter_stoch.Rdata")
+  load(file="simul_BG2019_dd_lognormobserror_time30_noddinter_stoch.Rdata")
+n.years <- 30
+}
+} else {
+  if (TIME10) {
+    load(file="samples_BG2019_dd_lognormobserror_time10_sim_nodd_ddinter_nostoch.Rdata")
+    load(file="simul_BG2019_dd_lognormobserror_time10_noddinter_nostoch.Rdata")
+    n.years <- 10
+  } else {
+    load(file="samples_BG2019_dd_lognormobserror_time30_sim_nodd_ddinter_nostoch.Rdata")
+    load(file="simul_BG2019_dd_lognormobserror_time30_noddinter_nostoch.Rdata")
+    n.years <- 30
+  }
+}
 n.simul<-length(list.samples)
 n.param<-dim(list.samples[[1]]$chain1)[2]
-#change line below depending on the scenario
-n.years<-10#30
 
 gelman.table<-matrix(NA,n.simul,n.param)
 effective.size<-matrix(NA,n.simul,n.param)
@@ -30,38 +49,6 @@ effective.size<-effective.size[,c("dd.fledg.rate.p" ,   "dd.fledg.rate.v"  ,  "d
 max(gelman.table.alphas)
 incl <- which(gelman.table.alphas[,"dd.fledg.rate.p"]<1.1&gelman.table.alphas[,"dd.fledg.rate.v"]<1.1&gelman.table.alphas[,"dd.phi.p"]<1.1&gelman.table.alphas[,"dd.phi.v"]<1.1&gelman.table.alphas[,"mu.fledg.rate.p"]<1.1&gelman.table.alphas[,"mu.fledg.rate.v"]<1.1&gelman.table.alphas[,"mu.phi.p[1]"]<1.1&gelman.table.alphas[,"mu.phi.p[2]"]<1.1&gelman.table.alphas[,"mu.phi.v[1]"]<1.1&gelman.table.alphas[,"mu.phi.v[2]"]<1.1&effective.size[,"dd.fledg.rate.p"]>50&effective.size[,"dd.fledg.rate.v"]>50&effective.size[,"dd.phi.p"]>50&effective.size[,"dd.phi.v"]>50&effective.size[,"mu.fledg.rate.p"]>50&effective.size[,"mu.fledg.rate.v"]>50&effective.size[,"mu.phi.p[1]"]>50&effective.size[,"mu.phi.p[2]"]>50&effective.size[,"mu.phi.v[1]"]>50&effective.size[,"mu.phi.v[2]"]>50)
 length(incl)
-#code for ploting chains
-
-plot(list.samples[[1]]$chain1[,'dd.fledg.rate.v'],type="l",ylim=c(-0.01,0.01))
-points(list.samples[[1]]$chain2[,'dd.fledg.rate.v'],type="l",col="red")
-abline(h=-0.005)
-
-plot(list.samples[[1]]$chain1[,'dd.fledg.rate.p'],type="l",ylim=c(-0.01,0.03))
-points(list.samples[[1]]$chain2[,'dd.fledg.rate.p'],type="l",col="red")
-abline(h=0)
-
-
-plot(list.samples[[1]]$chain1[,'dd.phi.v'],type="l",ylim=c(-0.06,0.06))
-points(list.samples[[1]]$chain2[,'dd.phi.v'],type="l",col="red")
-abline(h=0)
-
-
-plot(list.samples[[1]]$chain1[,'dd.phi.p'],type="l",ylim=c(-0.06,0.06))
-points(list.samples[[1]]$chain2[,'dd.phi.p'],type="l",col="red")
-abline(h=-0.01)
-
-#when random time variation
-#example 1 chain going "out"
-plot(list.samples[[3]]$chain1[,'sigma.phi.v[1]'],type="l")
-points(list.samples[[3]]$chain2[,'sigma.phi.v[1]'],type="l",col="red")
-
-
-#posterior correlations
-plot(list.samples[[1]]$chain1[,'dd.fledg.rate.p'],list.samples[[1]]$chain1[,'mu.fledg.rate.p'])
-points(list.samples[[1]]$chain2[,'dd.fledg.rate.p'],list.samples[[1]]$chain2[,'mu.fledg.rate.p'])
-
-
-# plot DD relationships (actual and estimated)
 
 dd.phi.v=0#no dd inter
 dd.phi.p=-0.01
@@ -71,6 +58,19 @@ mu.phi.p=c(0.5,qlogis(0.7))
 mu.phi.v=c(0.5-0.025 * 21,qlogis(0.6))
 mu.fledg.rate.p=0 + 0.004 * 101
 mu.fledg.rate.v=2
+
+plot(list.samples[[1]]$chain1[,'dd.fledg.rate.v'],type="l",ylim=c(-0.1,0.1))
+points(list.samples[[1]]$chain2[,'dd.fledg.rate.v'],type="l",col="red")
+abline(h=dd.fledg.rate.v)
+plot(list.samples[[1]]$chain1[,'dd.fledg.rate.p'],type="l",ylim=c(-0.1,0.1))
+points(list.samples[[1]]$chain2[,'dd.fledg.rate.p'],type="l",col="red")
+abline(h=dd.fledg.rate.p)
+plot(list.samples[[1]]$chain1[,'dd.phi.v'],type="l",ylim=c(-0.1,0.1))
+points(list.samples[[1]]$chain2[,'dd.phi.v'],type="l",col="red")
+abline(h=dd.phi.v)
+plot(list.samples[[1]]$chain1[,'dd.phi.p'],type="l",ylim=c(-0.1,0.1))
+points(list.samples[[1]]$chain2[,'dd.phi.p'],type="l",col="red")
+abline(h=dd.phi.p)
 list.samples.new<-list()
 for(i in 1:length(list.samples)){
   list.samples.new[[i]]<-rbind(list.samples[[i]]$chain1,list.samples[[i]]$chain2)
@@ -81,7 +81,9 @@ n.samples<-nrow(list.samples.converg[[1]])
 n.param<-length( list.samples.converg[[1]][1,])
 n.n<-100
 
-dd.phi.v.est<-dd.phi.p.est<-dd.fledg.rate.v.est<-dd.fledg.rate.p.est<-mu.phi.rec.p.est<-mu.phi.rec.v.est<-mu.phi.ad.p.est<-mu.phi.ad.v.est<-mu.fledg.rate.p.est<-mu.fledg.rate.v.est<-matrix(NA,n.simul,n.samples)
+dd.phi.v.est<-dd.phi.p.est<-dd.fledg.rate.v.est<-dd.fledg.rate.p.est<-
+  mu.phi.rec.p.est<-mu.phi.rec.v.est<-mu.phi.ad.p.est<-mu.phi.ad.v.est<-
+  mu.fledg.rate.p.est<-mu.fledg.rate.v.est<-matrix(NA,n.simul,n.samples)
 for(s in 1:n.simul){
   for(i in 1:n.samples){
     mcmc<-list.samples.converg[[s]][i,]
@@ -97,7 +99,39 @@ for(s in 1:n.simul){
     mu.fledg.rate.v.est[s,i]=mcmc['mu.fledg.rate.v']
   }
 }
-#I did not save simulated adult and juvenile abundances but they would be even more relevent here
+getestimates <- function(param,trueval) {
+  n.simul.conv <- nrow(param)
+  coverage <- numeric(n.simul.conv)
+  for (s in 1:n.simul.conv){
+    coverage[s] <- ifelse(quantile(param[s,],0.025)<trueval&trueval<quantile(param[s,],0.975),1,0)
+  }#s
+  estimates <- numeric(5)
+  names(estimates) <- c("simul. value","est. mean","2.5%","97.5%","coverage 95%")
+  estimates[1] <- trueval
+  estimates[2] <- mean(param)
+  estimates[3] <- quantile(rowMeans(param),0.025)
+  estimates[4] <- quantile(rowMeans(param),0.975)
+  estimates[5] <- mean(coverage)
+  return(estimates)
+}
+#alpha1
+getestimates(mu.phi.rec.p.est,mu.phi.p[1])
+#alpha2
+getestimates(dd.phi.p.est,dd.phi.p[1])
+#alpha3
+getestimates(mu.phi.rec.v.est,mu.phi.v[1])
+#alpha4
+getestimates(dd.phi.v.est,dd.phi.v[1])
+#alpha5
+getestimates(mu.fledg.rate.p.est,mu.fledg.rate.p)
+#alpha6
+getestimates(dd.fledg.rate.p.est,dd.fledg.rate.p)
+#alpha7
+getestimates(mu.fledg.rate.v.est,mu.fledg.rate.v)
+#alpha8
+getestimates(dd.fledg.rate.v.est,dd.fledg.rate.v)
+
+#I did not save simulated adult and juvenile abundances but they would be even more relevant here
 N.simul.p <- matrix(NA,n.simul,n.years)
 N.simul.v <- matrix(NA,n.simul,n.years)
 
@@ -128,8 +162,6 @@ for(s in 1:n.simul){
   fecP_intersp_est[s,] = exp(mean(mu.fledg.rate.p.est[s,]) + mean(dd.fledg.rate.p.est[s,]) * N.v)
   fecV_intrasp_est[s,] =exp(mean(mu.fledg.rate.v.est[s,]) + mean(dd.fledg.rate.v.est[s,]) * N.v)
 }#sim
-
-
 par(mfrow=c(2,2),omi=c(0,0,0.3,0))
 par(mai=c(0.8,0.8,0.4,0.4))
 plot(N.p,surv_juvP_intrasp,type='l',lwd=3,col='blue',ylab='Juvenile P survival',ylim=c(0,1),xlab='Adult P abundance')
@@ -162,26 +194,16 @@ for(s in 1:n.simul){
 }#s
 lines(N.v,fecP_intersp,type='l',lwd=3,col=viridis(1)[1])
 lines(N.v,colMeans(fecP_intersp_est),type='l',lwd=3,col=viridis(11)[7])
+if (TIME10) { 
+  if (STOCH) {
 mtext("10 years, with environmental stochasticity", side=3, outer=T, at=0.5)
-
-
-##get 95% coverage of true value
-getcov<-function(param,trueval)
-{
-  n.simul<-nrow(param)
-  coverage<-numeric(n.simul)
-  for (s in 1:n.simul){
-    coverage[s]<-ifelse(quantile(param[s,],0.025)<trueval&trueval<quantile(param[s,],0.975),1,0)
-  }#s
-  return(coverage)
-}  
-
-cov.dd.phi.v<-getcov(dd.phi.v.est,dd.phi.v)
-mean(cov.dd.phi.v)
-cov.dd.phi.p<-getcov(dd.phi.p.est,dd.phi.p)
-mean(cov.dd.phi.p)
-cov.dd.fledg.rate.v<-getcov(dd.fledg.rate.v.est,dd.fledg.rate.v)
-mean(cov.dd.fledg.rate.v)
-cov.dd.fledg.rate.p<-getcov(dd.fledg.rate.p.est,dd.fledg.rate.p)
-mean(cov.dd.fledg.rate.p)
-
+  } else {
+    mtext("10 years, without environmental stochasticity", side=3, outer=T, at=0.5)
+  }
+  } else {
+    if(STOCH) {
+      mtext("30 years, with environmental stochasticity", side=3, outer=T, at=0.5)
+    } else {
+      mtext("30 years, without environmental stochasticity", side=3, outer=T, at=0.5)
+    }
+  }
