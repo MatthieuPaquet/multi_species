@@ -2,11 +2,11 @@ library(coda)
 library(viridis)
 setwd("/home/matpaquet/Documents/mcmcsamples/multi_species/")
 #change according to the scenario (with/without temporal stochasticity = T/F)
-#STOCH=TRUE
-STOCH=FALSE
+#STOCH <- TRUE
+STOCH <- FALSE
 #change according to the true presence of interspecies interactions (with/without = T/F)
-DD_INTER <- TRUE
-#DD_INTER <- FALSE
+#DD_INTER <- TRUE
+DD_INTER <- FALSE
 if (STOCH) {
   if (DD_INTER) {
 load(file="samples_BG2019_dd_centered_time30_ddinter_stoch.Rdata")
@@ -133,7 +133,23 @@ for (s in 1:n.simul.conv) {
     phi.rec.v.est[s,,i] = mcmc[grep('^phi.v\\[1, ', names(mcmc))]
   }#i
 }#s
-#posterior correlations
+ 
+###get the SD of the density dependent parameters in order to use it to generate initial values for the Appendix study on the effect of the choice of initial values.
+#we used the scenario without true interspecific density dependence so the values given above were obtained when DD_INTER <- FALSE and without random temporal noise (set STOCH <- FALSE)
+#alpha2
+sd(dd.phi.p.est[1,])
+#0.005169812
+#alpha4
+sd(dd.phi.v.est[1,])
+#0.004512308
+#alpha6
+sd(dd.fledg.rate.p.est[1,])
+# 0.00305993
+#alpha8
+sd(dd.fledg.rate.v.est[1,])
+#0.000554107
+ 
+ #posterior correlations
 par(mfrow=c(2,2))
 plot(dd.phi.p.est,mu.phi.rec.p.est,col=rgb(0,0,0,0.1))
 plot(dd.phi.v.est,mu.phi.rec.v.est,col=rgb(0,0,0,0.1))
