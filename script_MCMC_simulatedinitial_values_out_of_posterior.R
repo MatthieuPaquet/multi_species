@@ -331,19 +331,19 @@ plot(rowMeans(dd.phi.p.est)~init.dd.phi.p,ylim=c(toplot.dd.phi.p[2],toplot.dd.ph
      main="intraspecies DD on juvenile predator survival",
      xlab=expression(paste("initial value for ",alpha[2])),ylab=expression(paste("posterior mean for ",alpha[2])))
 mtext("A",side = 3, adj = 0.05, line = -1,cex=1.5,padj = 0.5)
-abline(h=dd.phi.p)
+abline(h=dd.phi.p,col=rgb(0.68, 0.01, 0.84,0.8),cex=1.5)
 plot(rowMeans(dd.phi.v.est)~init.dd.phi.v,ylim=c(toplot.dd.phi.v[2],toplot.dd.phi.v[3]),
      main="interspecies DD on juvenile prey survival",
      xlab=expression(paste("initial value for ",alpha[4])),ylab=expression(paste("posterior mean for ",alpha[4])))
 mtext("B",side = 3, adj = 0.05, line = -1,cex=1.5,padj = 0.5)
-abline(h=dd.phi.v)
+abline(h=dd.phi.v,col=rgb(0.68, 0.01, 0.84,0.8),cex=1.5)
 plot(rowMeans(dd.fledg.rate.v.est)~init.dd.fledg.rate.v,ylim=c(toplot.dd.fledg.rate.v[2],toplot.dd.fledg.rate.v[3]),
      main="intraspecies DD on prey fecundity",
 xlab=expression(paste("initial value for ",alpha[6])),ylab=expression(paste("posterior mean for ",alpha[6])))
 mtext("C",side = 3, adj = 0.05, line = -1,cex=1.5,padj = 0.5)
-abline(h=dd.fledg.rate.v)
+abline(h=dd.fledg.rate.v,col=rgb(0.68, 0.01, 0.84,0.8),cex=1.5)
 plot(rowMeans(dd.fledg.rate.p.est)~init.dd.fledg.rate.p,ylim=c(toplot.dd.fledg.rate.p[2],toplot.dd.fledg.rate.p[3]),
      main="interspecies DD on predator fecundity",
 xlab=expression(paste("initial value for ",alpha[8])),ylab=expression(paste("posterior mean for ",alpha[8])))
 mtext("D",side = 3, adj = 0.05, line = -1,cex=1.5,padj = 0.5)
-abline(h=dd.fledg.rate.p)
+abline(h=dd.fledg.rate.p,col=rgb(0.68, 0.01, 0.84,0.8),cex=1.5)
