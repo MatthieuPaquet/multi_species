@@ -104,18 +104,26 @@ for (s in 1:n.simul.conv) {
 ###end of the copy paste same as outputs_centered_scenariosmaintext.R
 #choose the mcmc output number (to choose a dataset for which the true parameter values are well within the distribution of the posterior samples)
 out_nb <- 9
-###get the SD of the density dependent parameters in order to use it to generate initial values for the Appendix study on the effect of the choice of initial values.
+###get the mean and SD of the density dependent parameters in order to use it to generate initial values for the Appendix study on the effect of the choice of initial values.
 #we used the scenario without true interspecific density dependence so the values given above were obtained when DD_INTER <- FALSE and without random temporal noise (set STOCH <- FALSE)
 #alpha2
+mean(dd.phi.p.est[out_nb,])
+# -0.01509288
 sd(dd.phi.p.est[out_nb,])
 #0.006742872
 #alpha4
+mean(dd.phi.v.est[out_nb,])
+#-0.002619177
 sd(dd.phi.v.est[out_nb,])
 #0.00507794
 #alpha6
+mean(dd.fledg.rate.p.est[out_nb,])
+#-0.0007865593
 sd(dd.fledg.rate.p.est[out_nb,])
 # 0.002942077
 #alpha8
+mean(dd.fledg.rate.v.est[out_nb,])
+#-0.004409263
 sd(dd.fledg.rate.v.est[out_nb,])
 #0.0005731502
 

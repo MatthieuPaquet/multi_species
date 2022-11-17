@@ -282,6 +282,19 @@ for (i in 1:100){
 }
 #load them (to avoid rerunning the above when needed)
 load("samples_BG2019_out_of_post_initial_values.Rdata")
+#now we run with the true values as initial values
+DDinits.main<- list(dd.phi.v=dd.phi.v,
+                     dd.fledg.rate.p=dd.fledg.rate.p,
+                     mu.fledg.rate.v=mu.fledg.rate.v,
+                     mu.phi.p=mu.phi.p ,
+                     mu.fledg.rate.p=mu.fledg.rate.p,
+                     mu.phi.v=mu.phi.v,
+                     dd.phi.p=dd.phi.p,
+                     dd.fledg.rate.v= dd.fledg.rate.v,
+                     p.p=0.7,p.v=0.7,N1rec.p=N1rec.p,N1ad.p=N1ad.p,N1rec.v=N1rec.v,N1ad.v=N1ad.v)
+
+cDDmodelIPM$setInits(DDinits.main)
+list.samples.main<-runMCMC(cDDmcmc,niter=1200,nburnin=200,thin=1,nchains=2,setSeed=T)
 #check correlation between initial values and posterior mean estimates
 n.simul <- length(list.samples)
 x <- list()
@@ -308,42 +321,73 @@ for (s in 1:n.simul) {
     dd.fledg.rate.p.est[s,i] = mcmc['dd.fledg.rate.p']
   }#i
 }#s
+#when using true value as initial
+mcmc.main <- list()
+mcmc.main<- rbind(list.samples.main$chain1,list.samples.main$chain2)
+
+dd.phi.p.est.main = mcmc.main[,'dd.phi.p']
+dd.phi.v.est.main = mcmc.main[,'dd.phi.v']
+dd.fledg.rate.v.est.main = mcmc.main[,'dd.fledg.rate.v']
+dd.fledg.rate.p.est.main = mcmc.main[,'dd.fledg.rate.p']
 getestimates2 <- function(param) {
   n.simul <- nrow(param)
-  quantiles <-  meanest <-matrix(NA,n.simul,2)
+  meanest <-numeric(n.simul)
+  quantiles <-  matrix(NA,n.simul,2)
   for (s in 1:n.simul){
     quantiles[s,] <- quantile(param[s,],c(0.025,0.975))
-    meanest[s,] <- mean(param[s,])
+    meanest[s] <- mean(param[s,])
   }#s
-  estimates <- numeric(3)
-  names(estimates) <- c("est. mean","mean_2.5%","mean_97.5%")
-  estimates[1] <- mean(param)
-  estimates[2] <- mean(quantiles[,1])
-  estimates[3] <- mean(quantiles[,2])
+  estimates <- matrix(NA,n.simul,3)
+  names(estimates) <- c("est.mean","2.5%","97.5%")
+  estimates[,1] <- meanest[]
+  estimates[,2] <- quantiles[,1]
+  estimates[,3] <- quantiles[,2]
   return(estimates)
 }
 toplot.dd.phi.p <- getestimates2(dd.phi.p.est)
 toplot.dd.phi.v <- getestimates2(dd.phi.v.est)
 toplot.dd.fledg.rate.v <- getestimates2(dd.fledg.rate.v.est)
 toplot.dd.fledg.rate.p <- getestimates2(dd.fledg.rate.p.est)
+
+toplot.dd.phi.p.main <- c(mean(dd.phi.p.est.main),quantile(dd.phi.p.est.main,c(0.025,0.975)))
+toplot.dd.phi.v.main <- c(mean(dd.phi.v.est.main),quantile(dd.phi.v.est.main,c(0.025,0.975)))
+toplot.dd.fledg.rate.v.main <- c(mean(dd.fledg.rate.v.est.main),quantile(dd.fledg.rate.v.est.main,c(0.025,0.975)))
+toplot.dd.fledg.rate.p.main <- c(mean(dd.fledg.rate.p.est.main),quantile(dd.fledg.rate.p.est.main,c(0.025,0.975)))
+
 par(mfrow=c(2,2), omi=c(0,0,0.3,0))
-plot(rowMeans(dd.phi.p.est)~init.dd.phi.p,ylim=c(toplot.dd.phi.p[2],toplot.dd.phi.p[3]),
+plot(rowMeans(dd.phi.p.est)~init.dd.phi.p,ylim=range(dd.phi.p.est),xlim=range(init.dd.phi.p,dd.phi.p),
      main="intraspecies DD on juvenile predator survival",
      xlab=expression(paste("initial value for ",alpha[2])),ylab=expression(paste("posterior mean for ",alpha[2])))
+points(dd.phi.p,toplot.dd.phi.p.main[1],col="red",pch=19)
 mtext("A",side = 3, adj = 0.05, line = -1,cex=1.5,padj = 0.5)
 abline(h=dd.phi.p,col=rgb(0.68, 0.01, 0.84,0.8),cex=1.5)
-plot(rowMeans(dd.phi.v.est)~init.dd.phi.v,ylim=c(toplot.dd.phi.v[2],toplot.dd.phi.v[3]),
+segments(init.dd.phi.p,toplot.dd.phi.p[,2],init.dd.phi.p,toplot.dd.phi.p[,3],col=rgb(0,0,0,0.5))
+segments(dd.phi.p,toplot.dd.phi.p.main[2],dd.phi.p,toplot.dd.phi.p.main[3],col=rgb(1,0,0,0.8))
+
+plot(rowMeans(dd.phi.v.est)~init.dd.phi.v,ylim=range(dd.phi.v.est),xlim=range(init.dd.phi.v,dd.phi.v),
      main="interspecies DD on juvenile prey survival",
      xlab=expression(paste("initial value for ",alpha[4])),ylab=expression(paste("posterior mean for ",alpha[4])))
+points(dd.phi.v,toplot.dd.phi.v.main[1],col="red",pch=19)
 mtext("B",side = 3, adj = 0.05, line = -1,cex=1.5,padj = 0.5)
 abline(h=dd.phi.v,col=rgb(0.68, 0.01, 0.84,0.8),cex=1.5)
-plot(rowMeans(dd.fledg.rate.v.est)~init.dd.fledg.rate.v,ylim=c(toplot.dd.fledg.rate.v[2],toplot.dd.fledg.rate.v[3]),
+segments(init.dd.phi.v,toplot.dd.phi.v[,2],init.dd.phi.v,toplot.dd.phi.v[,3],col=rgb(0,0,0,0.5))
+segments(dd.phi.v,toplot.dd.phi.v.main[2],dd.phi.v,toplot.dd.phi.v.main[3],col=rgb(1,0,0,0.8))
+
+plot(rowMeans(dd.fledg.rate.v.est)~init.dd.fledg.rate.v,ylim=range(dd.fledg.rate.v.est),xlim=range(init.dd.fledg.rate.v,dd.fledg.rate.v),
      main="intraspecies DD on prey fecundity",
 xlab=expression(paste("initial value for ",alpha[6])),ylab=expression(paste("posterior mean for ",alpha[6])))
+points(dd.fledg.rate.v,toplot.dd.fledg.rate.v.main[1],col="red",pch=19)
 mtext("C",side = 3, adj = 0.05, line = -1,cex=1.5,padj = 0.5)
 abline(h=dd.fledg.rate.v,col=rgb(0.68, 0.01, 0.84,0.8),cex=1.5)
-plot(rowMeans(dd.fledg.rate.p.est)~init.dd.fledg.rate.p,ylim=c(toplot.dd.fledg.rate.p[2],toplot.dd.fledg.rate.p[3]),
+segments(init.dd.fledg.rate.v,toplot.dd.fledg.rate.v[,2],init.dd.fledg.rate.v,toplot.dd.fledg.rate.v[,3],col=rgb(0,0,0,0.5))
+segments(dd.fledg.rate.v,toplot.dd.fledg.rate.v.main[2],dd.fledg.rate.v,toplot.dd.fledg.rate.v.main[3],col=rgb(1,0,0,0.8))
+
+plot(rowMeans(dd.fledg.rate.p.est)~init.dd.fledg.rate.p,ylim=range(dd.fledg.rate.p.est),xlim=range(init.dd.fledg.rate.p,dd.fledg.rate.p),
      main="interspecies DD on predator fecundity",
 xlab=expression(paste("initial value for ",alpha[8])),ylab=expression(paste("posterior mean for ",alpha[8])))
+points(dd.fledg.rate.p,toplot.dd.fledg.rate.p.main[1],col="red",pch=19)
 mtext("D",side = 3, adj = 0.05, line = -1,cex=1.5,padj = 0.5)
 abline(h=dd.fledg.rate.p,col=rgb(0.68, 0.01, 0.84,0.8),cex=1.5)
+segments(init.dd.fledg.rate.p,toplot.dd.fledg.rate.p[,2],init.dd.fledg.rate.p,toplot.dd.fledg.rate.p[,3],col=rgb(0,0,0,0.5))
+segments(dd.fledg.rate.p,toplot.dd.fledg.rate.p.main[2],dd.fledg.rate.p,toplot.dd.fledg.rate.p.main[3],col=rgb(1,0,0,0.8))
+
