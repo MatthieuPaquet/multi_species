@@ -468,9 +468,9 @@ DDmcmc  <-  buildMCMC(DDmcmcConf)
 cDDmcmc  <-  compileNimble(DDmcmc, project = cDDmodelIPM)
 #Run the MCMC
 #Run the MCMC
-niter=20200
+niter=60200
 nburnin=200
-thin=20
+thin=60
 nchains=2
 list.samples[[1]] <- runMCMC(cDDmcmc,niter=niter,nburnin=nburnin,thin=thin,nchains=nchains,setSeed=T)
 for (i in 2:100){
