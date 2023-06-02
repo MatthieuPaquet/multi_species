@@ -164,15 +164,15 @@ for(s in 1:n.simul){
 }#sim
 if (STOCH) {
   if (TIME10) {
-    pdf("plots/time10n100_noddinter_stoch.pdf")
+    pdf("plots/time10n100_noddinter_stoch.pdf")     #FigureS6
   } else {
-    pdf("plots/time30n20_noddinter_stoch.pdf")
+    pdf("plots/time30n20_noddinter_stoch.pdf")     #FigureS8
   }
 } else {
   if (TIME10) {
-    pdf("plots/time10n100_noddinter_nostoch.pdf")
+    pdf("plots/time10n100_noddinter_nostoch.pdf")    #FigureS5
   } else {
-    pdf("plots/time30n20_noddinter_nostoch.pdf")
+    pdf("plots/time30n20_noddinter_nostoch.pdf")     #FigureS7
   }
 }
 
