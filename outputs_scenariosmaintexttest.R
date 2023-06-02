@@ -243,6 +243,19 @@ for (s in 1:n.simul.conv) {
     lower.phi.rec.v.est[s,t] <- quantile(phi.rec.v.est[s,t,],0.025)
   }#years
 }#simuls
+if (STOCH) {
+  if (DD_INTER) {
+    pdf(file="plots/ddpresent_stoch.pdf",width=8.6,height=8.6)#FigureS3
+  } else {
+    pdf(file="plots/ddabsent_stoch.pdf",width=8.6,height=8.6)#Figure3
+  }
+} else {
+  if (DD_INTER) {
+    pdf(file="plots/ddpresent_nostoch.pdf",width=8.6,height=8.6)#FigureS1
+  } else {
+    pdf(file="plots/ddabsent_nostoch.pdf",width=8.6,height=8.6)#Figure1
+  }
+}
 par(mfrow=c(2,2),omi=c(0,0,0.3,0))
 par(mai=c(0.8,0.8,0.4,0.4))
 plot(N.ad.p,surv_juvP_intrasp,type='l',lwd=3,col='blue',ylab='Juvenile P survival',ylim=c(0,1),xlab='Adult P abundance')
@@ -284,6 +297,7 @@ if (STOCH) {
 } else {
   mtext("Without environmental stochasticity", side=3, outer=T, at=0.5)
 }
+dev.off()
 ##
 getestimates <- function(param,trueval) {
   n.simul.conv <- nrow(param)
@@ -340,6 +354,20 @@ mean( cov_surv_juvV_intersp_curve)
 mean(cov_fecP_intersp_curve)
 mean(cov_fecV_intrasp_curve)
 ###one example plot with credible intervals
+if (STOCH) {
+  if (DD_INTER) {
+    pdf(file="plots/exampleddpresent_stoch.pdf",width=8.6,height=8.6)#FigureS4
+  } else {
+    pdf(file="plots/exampleddabsent_stoch.pdf",width=8.6,height=8.6)#Figure4
+  }
+} else {
+  if (DD_INTER) {
+    pdf(file="plots/exampleddpresent_nostoch.pdf",width=8.6,height=8.6)#FigureS2
+  } else {
+    pdf(file="plots/exampleddabsent_nostoch.pdf",width=8.6,height=8.6)#Figure2
+  }
+}
+
 par(mfrow=c(2,2), omi=c(0,0,0.3,0))
 par(mai=c(0.8,0.8,0.4,0.4))
 plot(N.ad.p,surv_juvP_intrasp,type='l',lwd=3,col=viridis(1,alpha = .8)[1],ylab='Juvenile P survival',ylim=c(0,1),xlab='Adult P abundance')
@@ -385,6 +413,7 @@ if (STOCH) {
 } else {
   mtext("Without environmental stochasticity", side=3, outer=T, at=0.5)
 }
+dev.off()
 #proportion of estimated density dependence more negative than true curves at N= Nmax
 proplower_surv_juvP_intrasp <- ifelse(surv_juvP_intrasp_est[,n.n] < surv_juvP_intrasp[n.n],1,0)
 sum(proplower_surv_juvP_intrasp)
