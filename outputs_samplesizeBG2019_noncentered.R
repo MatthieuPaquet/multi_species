@@ -162,6 +162,20 @@ for(s in 1:n.simul){
   fecP_intersp_est[s,] = exp(mean(mu.fledg.rate.p.est[s,]) + mean(dd.fledg.rate.p.est[s,]) * N.v)
   fecV_intrasp_est[s,] =exp(mean(mu.fledg.rate.v.est[s,]) + mean(dd.fledg.rate.v.est[s,]) * N.v)
 }#sim
+if (STOCH) {
+  if (TIME10) {
+    pdf("plots/time10n100_noddinter_stoch.pdf")
+  } else {
+    pdf("plots/time30n20_noddinter_stoch.pdf")
+  }
+} else {
+  if (TIME10) {
+    pdf("plots/time10n100_noddinter_nostoch.pdf")
+  } else {
+    pdf("plots/time30n20_noddinter_nostoch.pdf")
+  }
+}
+
 par(mfrow=c(2,2),omi=c(0,0,0.3,0))
 par(mai=c(0.8,0.8,0.4,0.4))
 plot(N.p,surv_juvP_intrasp,type='l',lwd=3,col='blue',ylab='Juvenile P survival',ylim=c(0,1),xlab='Adult P abundance')
@@ -207,3 +221,4 @@ mtext("10 years, with environmental stochasticity", side=3, outer=T, at=0.5)
       mtext("30 years, without environmental stochasticity", side=3, outer=T, at=0.5)
     }
   }
+dev.off()
