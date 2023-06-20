@@ -4,34 +4,30 @@ library(viridis)
 setwd("/home/matpaquet/Documents/multi_species/")
 #set to TRUE for scenario with 100 individuals marked every year for 10 years.
 #if FALSE it loads the scenario with 20 individuals marked per year for 30 years.
-TIME10 <- FALSE
-#TIME10 <- TRUE
-STOCH <- TRUE
-#STOCH <- FALSE
+#TIME10 <- FALSE
+TIME10 <- TRUE
+#STOCH <- TRUE
+STOCH <- FALSE
 if (STOCH) {
 if (TIME10) {
 load(file="data/samples_BG2019_dd_time10n100_noddinter_stoch.Rdata")
 load(file="data/simul_BG2019_dd_time10n100_noddinter_stoch.Rdata")
-n.years <- 10
 } else {
   load(file="data/samples_BG2019_dd_time30n20_noddinter_stoch.Rdata")
   load(file="data/simul_BG2019_dd_time30n20_noddinter_stoch.Rdata")
-n.years <- 30
 }
 } else {
   if (TIME10) {
     load(file="data/samples_BG2019_dd_time10n100_noddinter_nostoch.Rdata")
     load(file="data/simul_BG2019_dd_time10n100_noddinter_nostoch.Rdata")
-    n.years <- 10
   } else {
     load(file="data/samples_BG2019_dd_time30n20_noddinter_nostoch.Rdata")
     load(file="data/simul_BG2019_dd_time30n20_noddinter_nostoch.Rdata")
-    n.years <- 30
   }
 }
 n.simul<-length(list.samples)
 n.param<-dim(list.samples[[1]]$chain1)[2]
-
+n.years <- length(list.simul[[1]]$N.p)
 gelman.table<-matrix(NA,n.simul,n.param)
 effective.size<-matrix(NA,n.simul,n.param)
 
