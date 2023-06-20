@@ -281,19 +281,19 @@ for (i in 1:100) {
                           fledg.obs.v=cDDmodel$fledg.obs.v,
                           marray.j.v=cDDmodel$marray.j.v,
                           marray.a.v=cDDmodel$marray.a.v,r.a.v=cDDmodel$r.a.v
-                           )
+  )
   print(i)  
 }
 if (DD_INTER) {
   if (STOCH) {
-    save(list.simul, file="simul_BG2019_dd_centered_time30_ddinter_stochtest.Rdata")
+    save(list.simul, file="simul_BG2019_dd_centered_time30_ddinter_stoch.Rdata")
   } else {
-    save(list.simul, file="simul_BG2019_dd_centered_time30_ddinter_nostochtest.Rdata")}
+    save(list.simul, file="simul_BG2019_dd_centered_time30_ddinter_nostoch.Rdata")}
 } else {
   if (STOCH) {
-    save(list.simul, file="simul_BG2019_dd_centered_time30_noddinter_stochtest.Rdata")}
+    save(list.simul, file="simul_BG2019_dd_centered_time30_noddinter_stoch.Rdata")}
   else {
-    save(list.simul, file="simul_BG2019_dd_centered_time30_noddinter_nostochtest.Rdata")
+    save(list.simul, file="simul_BG2019_dd_centered_time30_noddinter_nostoch.Rdata")
   }
 }#nodd
 if (DD_INTER) {
@@ -371,21 +371,22 @@ DDdata <- list(r.a.p=r.a.p,r.a.v=r.a.v,
                N.obs.p=N.obs.p,fledg.obs.p=fledg.obs.p,
                marray.j.v=marray.j.v,marray.a.v=marray.a.v,
                N.obs.v=N.obs.v,fledg.obs.v=fledg.obs.v)
+list.N.init <- list(N.rec.v=rep(NA, nyears),N.rec.p=rep(NA, nyears),N.ad.v=rep(NA, nyears),N.ad.p=rep(NA, nyears))
 if (STOCH) {
   if (TRUE_DD_INTER) {
     DDinits <- c(list(sigma.phi.p=c(0.1,0.1), sigma.phi.v=c(0.1,0.1), 
                       sigma.fledg.rate.p=0.1, sigma.fledg.rate.v=0.1, 
-                      dd.phi.v=-0.025, dd.fledg.rate.p=0.004), list.base)
+                      dd.phi.v=-0.025, dd.fledg.rate.p=0.004), list.base,list.N.init)
   } else {
     DDinits <- c(list(sigma.phi.p=c(0.1,0.1), sigma.phi.v=c(0.1,0.1), 
                       sigma.fledg.rate.p=0.1, sigma.fledg.rate.v=0.1, 
-                      dd.phi.v=0, dd.fledg.rate.p=0), list.base)
+                      dd.phi.v=0, dd.fledg.rate.p=0), list.base,list.N.init)
   }#ddINTER
 } else {
   if (TRUE_DD_INTER) {
-    DDinits <- c(list(dd.phi.v=-0.025, dd.fledg.rate.p=0.004), list.base)
+    DDinits <- c(list(dd.phi.v=-0.025, dd.fledg.rate.p=0.004), list.base,list.N.init)
   } else {
-    DDinits <- c(list(dd.phi.v=0, dd.fledg.rate.p=0), list.base)
+    DDinits <- c(list(dd.phi.v=0, dd.fledg.rate.p=0), list.base,list.N.init)
   }#ddINTER
 }#stoch
 #Build the model for the IPM
@@ -503,14 +504,14 @@ for (i in 2:100) {
   ##save posterior samples
   if (TRUE_DD_INTER) {
     if (STOCH) {
-      save(list.samples, file="samples_BG2019_dd_centered_time30_ddinter_stochtest.Rdata")
+      save(list.samples, file="samples_BG2019_dd_centered_time30_ddinter_stoch.Rdata")
     } else {
-      save(list.samples, file="samples_BG2019_dd_centered_time30_ddinter_nostochtest.Rdata")}
+      save(list.samples, file="samples_BG2019_dd_centered_time30_ddinter_nostoch.Rdata")}
   } else {
     if (STOCH) {
-      save(list.samples, file="samples_BG2019_dd_centered_time30_noddinter_stochtest.Rdata")}
+      save(list.samples, file="samples_BG2019_dd_centered_time30_noddinter_stoch.Rdata")}
     else {
-      save(list.samples, file="samples_BG2019_dd_centered_time30_noddinter_nostochtest.Rdata")
+      save(list.samples, file="samples_BG2019_dd_centered_time30_noddinter_nostoch.Rdata")
     }
   }#nodd
   print(i)

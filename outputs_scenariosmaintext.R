@@ -9,19 +9,19 @@ STOCH <- TRUE
 DD_INTER <- FALSE
 if (STOCH) {
   if (DD_INTER) {
-    load(file="data/samples_BG2019_dd_centered_time30_ddinter_stochtest.Rdata")
-    load(file="data/simul_BG2019_dd_centered_time30_ddinter_stochtest.Rdata")
+    load(file="data/samples_BG2019_dd_centered_time30_ddinter_stoch.Rdata")
+    load(file="data/simul_BG2019_dd_centered_time30_ddinter_stoch.Rdata")
   } else {
-    load(file="data/samples_BG2019_dd_centered_time30_noddinter_stochtest.Rdata")
-    load(file="data/simul_BG2019_dd_centered_time30_noddinter_stochtest.Rdata")
+    load(file="data/samples_BG2019_dd_centered_time30_noddinter_stoch.Rdata")
+    load(file="data/simul_BG2019_dd_centered_time30_noddinter_stoch.Rdata")
   }
 } else {
   if (DD_INTER) {
-    load(file="data/samples_BG2019_dd_centered_time30_ddinter_nostochtest.Rdata")
-    load(file="data/simul_BG2019_dd_centered_time30_ddinter_nostochtest.Rdata")
+    load(file="data/samples_BG2019_dd_centered_time30_ddinter_nostoch.Rdata")
+    load(file="data/simul_BG2019_dd_centered_time30_ddinter_nostoch.Rdata")
   } else {
-    load(file="data/samples_BG2019_dd_centered_time30_noddinter_nostochtest.Rdata")
-    load(file="data/simul_BG2019_dd_centered_time30_noddinter_nostochtest.Rdata")
+    load(file="data/samples_BG2019_dd_centered_time30_noddinter_nostoch.Rdata")
+    load(file="data/simul_BG2019_dd_centered_time30_noddinter_nostoch.Rdata")
   }
 }
 n.simul <- length(list.samples)
