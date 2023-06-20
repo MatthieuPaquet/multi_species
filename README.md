@@ -1,8 +1,11 @@
 # multi_species
-This folder contains R code of a two-species integrated predator-prey model in Nimble and used it to simulate data and fit the model to the simulated data
+This folder contains R code of a two-species integrated predator-prey model in Nimble used to simulate data and fit the models to the simulated data
 
 Data and figures can be found on the OSF project:
 https://osf.io/xfa6e/
+
+##removal
+Contains a capture-removal version of the IPM (whereby individuals are only recaptured once). More details on the README file of this folder.
 
 ### Nimble_PBpred_time30ind100.R
 File used to both simulate the data and fit the Integrated Predator Prey Model on them for the results presented in the main text, that is:

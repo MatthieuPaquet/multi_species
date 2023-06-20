@@ -1,5 +1,7 @@
-# multi_species
-This folder contains R code of a two-species integrated predator-prey model in Nimble and used it to simulate data and fit the model to the simulated data
+# multi_species capture-removal Integrated population model
+In a previous version of this work, we inadvertently omitted the CMR array of adults in the code, which transformed the model into a capture-removal model (i.e., individuals were re-captured only once and then removed from the population, as in hunting or fishing data). 
+
+This folder therefore contains R codes of a two-species integrated predator-prey model in Nimble used to simulate data and fit the models to the simulated data
 
 ### Nimble_BG2019_centered_T30_N100.R
 File used to both simulate the data and fit the Integrated Predator Prey Model on them for the results presented in the main text, that is:
