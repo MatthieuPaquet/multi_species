@@ -1,9 +1,0 @@
--Added forgotten initial value for dd.phi.v
-
--Added random noise with exponential priors
-
--Code for all scenarios
-
--Deleted the line for initial values for the ICM since they are already defined to simulate the data.
-
--Changed "intercepts" parameters (on log and logit scales) of models without interspecies dd based on asymptotic values for -fig.A1 BG2019

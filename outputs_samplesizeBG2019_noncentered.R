@@ -5,7 +5,9 @@ setwd("/home/matpaquet/Documents/multi_species/")
 #set to TRUE for scenario with 100 individuals marked every year for 10 years.
 #if FALSE it loads the scenario with 20 individuals marked per year for 30 years.
 TIME10 <- FALSE
+#TIME10 <- TRUE
 STOCH <- TRUE
+#STOCH <- FALSE
 if (STOCH) {
 if (TIME10) {
 load(file="data/samples_BG2019_dd_time10n100_noddinter_stoch.Rdata")
