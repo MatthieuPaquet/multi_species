@@ -4,7 +4,7 @@ This folder contains R code of a two-species integrated predator-prey model in N
 Data and figures can be found on the OSF project:
 https://osf.io/xfa6e/
 
-##removal
+## removal
 Contains a capture-removal version of the IPM (whereby individuals are only recaptured once). More details on the README file of this folder.
 
 ### Nimble_PBpred_time30ind100.R
