@@ -1,5 +1,6 @@
 library(coda)
 library(viridis)
+library(xtable)
 #code for gelman diagnostic
 setwd("/home/matpaquet/Documents/multi_species/")
 #set to TRUE for scenario with 100 individuals marked every year for 10 years.
@@ -97,38 +98,6 @@ for(s in 1:n.simul){
     mu.fledg.rate.v.est[s,i]=mcmc['mu.fledg.rate.v']
   }
 }
-getestimates <- function(param,trueval) {
-  n.simul.conv <- nrow(param)
-  coverage <- numeric(n.simul.conv)
-  for (s in 1:n.simul.conv){
-    coverage[s] <- ifelse(quantile(param[s,],0.025)<trueval&trueval<quantile(param[s,],0.975),1,0)
-  }#s
-  estimates <- numeric(5)
-  names(estimates) <- c("simul. value","est. mean","2.5%","97.5%","coverage 95%")
-  estimates[1] <- trueval
-  estimates[2] <- mean(param)
-  estimates[3] <- quantile(rowMeans(param),0.025)
-  estimates[4] <- quantile(rowMeans(param),0.975)
-  estimates[5] <- mean(coverage)
-  return(estimates)
-}
-#alpha1
-getestimates(mu.phi.rec.p.est,mu.phi.p[1])
-#alpha2
-getestimates(dd.phi.p.est,dd.phi.p[1])
-#alpha3
-getestimates(mu.phi.rec.v.est,mu.phi.v[1])
-#alpha4
-getestimates(dd.phi.v.est,dd.phi.v[1])
-#alpha5
-getestimates(mu.fledg.rate.p.est,mu.fledg.rate.p)
-#alpha6
-getestimates(dd.fledg.rate.p.est,dd.fledg.rate.p)
-#alpha7
-getestimates(mu.fledg.rate.v.est,mu.fledg.rate.v)
-#alpha8
-getestimates(dd.fledg.rate.v.est,dd.fledg.rate.v)
-
 #I did not save simulated adult and juvenile abundances but they would be even more relevant here
 N.simul.p <- matrix(NA,n.simul,n.years)
 N.simul.v <- matrix(NA,n.simul,n.years)
@@ -162,18 +131,18 @@ for(s in 1:n.simul){
 }#sim
 if (STOCH) {
   if (TIME10) {
-    pdf("plots/time10n100_noddinter_stoch.pdf")     #FigureS6
+    scenarioname <- "time10n100_noddinter_stoch"     #FigureS6
   } else {
-    pdf("plots/time30n20_noddinter_stoch.pdf")      #FigureS8
+    scenarioname <- "time30n20_noddinter_stoch"      #FigureS8
   }
 } else {
   if (TIME10) {
-    pdf("plots/time10n100_noddinter_nostoch.pdf")    #FigureS5
+    scenarioname <- "time10n100_noddinter_nostoch"     #FigureS6
   } else {
-    pdf("plots/time30n20_noddinter_nostoch.pdf")     #FigureS7
+    scenarioname <- "time30n20_noddinter_nostoch"     #FigureS7
   }
 }
-
+pdf(file=paste("plots/",scenarioname,".pdf",sep=""),width=8.6,height=8.6)
 par(mfrow=c(2,2),omi=c(0,0,0.3,0))
 par(mai=c(0.8,0.8,0.4,0.4))
 plot(N.p,surv_juvP_intrasp,type='l',lwd=3,col='blue',ylab='Juvenile P survival',ylim=c(0,1),xlab='Adult P abundance')
@@ -220,3 +189,59 @@ mtext("10 years, with environmental stochasticity", side=3, outer=T, at=0.5)
     }
   }
 dev.off()
+getestimates <- function(param,trueval) {
+  n.simul.conv <- nrow(param)
+  coverage <- numeric(n.simul.conv)
+  for (s in 1:n.simul.conv){
+    coverage[s] <- ifelse(quantile(param[s,],0.025)<trueval&trueval<quantile(param[s,],0.975),1,0)
+  }#s
+  estimates <- numeric(5)
+  names(estimates) <- c("simul. Value","est. mean","2.5%","97.5%","coverage 95%")
+  estimates[1] <- trueval
+  estimates[2] <- mean(param)
+  estimates[3] <- quantile(rowMeans(param),0.025)
+  estimates[4] <- quantile(rowMeans(param),0.975)
+  estimates[5] <- mean(coverage)
+  return(round(estimates,digits = 3))
+}
+alphasamples <- list(mu.phi.rec.p.est,    #alpha1
+                     dd.phi.p.est,        #alpha2
+                     mu.phi.rec.v.est,    #alpha3
+                     dd.phi.v.est,        #alpha4
+                     mu.fledg.rate.p.est, #alpha5 
+                     dd.fledg.rate.p.est, #alpha6
+                     mu.fledg.rate.v.est, #alpha7
+                     dd.fledg.rate.v.est) #alpha8
+alphatrueval <- c(mu.phi.p[1],
+                  dd.phi.p[1], 
+                  mu.phi.v[1],
+                  dd.phi.v[1],
+                  mu.fledg.rate.p, 
+                  dd.fledg.rate.p, 
+                  mu.fledg.rate.v,
+                  dd.fledg.rate.v)
+scenario <- numeric(length(alphatrueval))
+if (TIME10) {
+  scenario[1:2] <- c("10 years","100 ind. marked/year")
+ } else {scenario[1:2] <- c("30 years","20 ind. marked/year")}
+  if (STOCH) {
+    scenario[3] <- "Temporal noise"
+  } else {
+    scenario[3] <- "No temporal noise"
+  }
+scenario[4:length(scenario)] <- ""
+latexresults <- matrix(NA,nrow=length(alphatrueval),ncol=5)
+csvtableresults <- matrix(NA,nrow=length(alphatrueval),ncol=5)
+colnames(latexresults) <- c("Scenario","Param.","Value","Estimate (95% quantiles)","coverage 95%")
+colnames(csvtableresults) <- names(getestimates(alphasamples[[1]],alphatrueval[1]))
+for (i in 1:length(alphatrueval)) {
+  csvtableresults[i,] <- getestimates(alphasamples[[i]],alphatrueval[i])
+  latexresults[i,] <- c(scenario[i],
+                        paste("alpha_",i,sep=""),
+                        alphatrueval[i],
+                        paste(getestimates(alphasamples[[i]],alphatrueval[i])[2]," (",
+                              getestimates(alphasamples[[i]],alphatrueval[i])[3],"; ",getestimates(alphasamples[[i]],alphatrueval[i])[4],")",sep=""),
+                        getestimates(alphasamples[[i]],alphatrueval[i])[5])
+}
+print(xtable(latexresults),include.rownames=FALSE)
+write.csv(csvtableresults,file=paste("plots/tableresults_",scenarioname,".csv",sep=""))
