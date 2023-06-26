@@ -1,7 +1,9 @@
 # multi_species capture-removal Integrated population model
 In a previous version of this work, we inadvertently omitted the CMR array of adults in the code, which transformed the model into a capture-removal model (i.e., individuals were re-captured only once and then removed from the population, as in hunting or fishing data). 
 
-This folder therefore contains R codes of a two-species integrated predator-prey model in Nimble used to simulate data and fit the models to the simulated data
+This folder therefore contains R codes of a two-species integrated predator-prey model in Nimble used to simulate data and fit the models to the simulated data.
+
+Note that results were similar, but model convergence was not achieved for a sumbstancial number of fitted models. Around 95% of the models without random time variations converged but about 75% of the models with random time variation converged. When using the sample size design of Barraquand&Gimenez, sometimes less than 50% of the models converged satisfactorily.
 
 ### Nimble_BG2019_centered_T30_N100.R
 File used to both simulate the data and fit the Integrated Predator Prey Model on them for the results presented in the main text, that is:
